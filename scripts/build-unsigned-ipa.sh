@@ -8,7 +8,7 @@ xcodegen generate
 xcodebuild \
   -project QuietReader.xcodeproj \
   -scheme QuietReader \
-  -configuration Debug \
+  -configuration Release \
   -sdk iphoneos \
   -destination 'generic/platform=iOS' \
   -derivedDataPath build/device \
@@ -17,11 +17,14 @@ xcodebuild \
   CODE_SIGN_IDENTITY="" \
   build
 
-APP_PATH="$(find build/device/Build/Products/Debug-iphoneos -maxdepth 1 -name '*.app' -print -quit)"
+APP_PATH="$(find build/device/Build/Products/Release-iphoneos -maxdepth 1 -name '*.app' -print -quit)"
 if [[ -z "$APP_PATH" ]]; then
   echo "未找到设备构建产物" >&2
   exit 1
 fi
+
+# Debug 专用 dylib 在第三方重签名时易被漏签导致 dyld 拒载闪退，Release 构建不含这些，兜底再清一次
+rm -f "$APP_PATH/__preview.dylib" "$APP_PATH"/*.debug.dylib
 
 for resource in community-sources.json demo-source.json Assets.car; do
   if [[ ! -e "$APP_PATH/$resource" ]]; then
