@@ -14,6 +14,11 @@ jobs:
       - name: 检出源码
         uses: actions/checkout@v4
 
+      - name: 探测可用 Xcode
+        run: |
+          ls -d /Applications/Xcode*.app 2>/dev/null
+          for x in /Applications/Xcode*.app; do echo "== $x"; "$x/Contents/Developer/usr/bin/xcodebuild" -version 2>/dev/null | head -2; done
+
       - name: 安装 XcodeGen
         run: brew install xcodegen
 
