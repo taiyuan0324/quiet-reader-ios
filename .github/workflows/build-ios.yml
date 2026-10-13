@@ -26,7 +26,10 @@ jobs:
         run: bash scripts/run-tests.sh
 
       - name: 构建设备 IPA
-        run: bash scripts/build-unsigned-ipa.sh
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app
+          xcodebuild -version
+          bash scripts/build-unsigned-ipa.sh
 
       - name: 上传无签名 IPA
         uses: actions/upload-artifact@v4
